@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.praktikum5.data.DefaultStudentRepository
 import com.example.praktikum5.data.local.DatabaseProvider
+import com.example.praktikum5.data.location.DefaultLocationRepository
 import com.example.praktikum5.data.preference.UserPreferencesRepository
 import com.example.praktikum5.data.remote.RetrofitClient
 import com.example.praktikum5.data.remote.StudentRemoteDataSource
@@ -23,9 +24,12 @@ import com.example.praktikum5.screen.DetailScreen
 import com.example.praktikum5.screen.FavoritesScreen
 import com.example.praktikum5.screen.HomeScreen
 import com.example.praktikum5.screen.ProfileScreen
+import com.example.praktikum5.ui.theme.Location.LocationScreen
+import com.example.praktikum5.ui.theme.Location.LocationViewModel
 import com.example.praktikum5.ui.theme.detail.DetailViewModel
 import com.example.praktikum5.ui.theme.favorite.FavoritesViewModel
 import com.example.praktikum5.ui.theme.home.HomeViewModel
+import com.google.android.gms.location.LocationServices
 
 @Composable
 fun NavigationLab() {
@@ -40,6 +44,13 @@ fun NavigationLab() {
             DatabaseProvider.getDatabase(context).favoriteStudentDao()
         )
     }
+    val fusedLocationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context.applicationContext)
+    }
+    val locationRepository = remember {
+        DefaultLocationRepository(context.applicationContext, fusedLocationClient)
+    }
+
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -59,6 +70,9 @@ fun NavigationLab() {
                 },
                 onOpenFavorites = {
                     navController.navigate(Routes.FAVORITES)
+                },
+                onOpenLocation = {
+                    navController.navigate(Routes.LOCATION)
                 },
                 onOpenAbout = { id ->
                     navController.navigate(Routes.about(id))
@@ -82,6 +96,15 @@ fun NavigationLab() {
                 onStudentClick = { id ->
                     navController.navigate(Routes.detail(id))
                 },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.LOCATION) {
+            val locationViewModel: LocationViewModel = viewModel(
+                factory = LocationViewModel.factory(locationRepository)
+            )
+            LocationScreen(
+                viewModel = locationViewModel,
                 onBack = { navController.popBackStack() }
             )
         }

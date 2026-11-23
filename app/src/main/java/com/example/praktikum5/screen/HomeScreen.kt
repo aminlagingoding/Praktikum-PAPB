@@ -35,6 +35,7 @@ fun HomeScreen(
     searchQuery: String,
     onStudentClick: (Int) -> Unit,
     onOpenFavorites: () -> Unit,
+    onOpenLocation: () -> Unit,
     onOpenAbout: (Int) -> Unit,
     onOpenProfile: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
@@ -153,6 +154,12 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Lihat Favorit")
+        }
+        OutlinedButton(
+            onClick = onOpenLocation,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Buka Lokasi Saya")
         }
         OutlinedButton(
             onClick = { onOpenAbout(defaultStudentId) },
